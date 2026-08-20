@@ -1,0 +1,56 @@
+import asyncio
+import random
+from playwright.async_api import async_playwright
+
+# أجهزة موبايل حقيقية للتنويع والتنكر الكامل
+MOBILE_DEVICES = ["Pixel 5", "iPhone 12", "Galaxy S9+", "Pixel 4"]
+
+
+async def send_mobile_visit(visit_num):
+    async with async_playwright() as p:
+        # اختيار جهاز موبايل عشوائي لكل زيارة
+        selected_device = random.choice(MOBILE_DEVICES)
+        device_config = p.devices[selected_device]
+
+        browser = await p.chromium.launch(headless=True)
+
+        # إنشاء جلسة جديدة كلياً (كوكيز وبصمة جهاز وIP فريد)
+        context = await browser.new_context(
+            **device_config,
+            locale=random.choice(["en-US", "en-CA", "en-GB"]),
+            timezone_id=random.choice(
+                ["America/New_York", "America/Toronto", "America/Chicago"]
+            ),
+        )
+
+        page = await context.new_page()
+
+        try:
+            print(
+                f"🚀 [Visit {visit_num}] Mobile ({selected_device}) connecting..."
+            )
+            await page.goto("https://loveoooouuu.blogspot.com/", timeout=60000)
+            await page.wait_for_timeout(3000)
+
+            # ضغطة شاشة لتفعيل إعلانات PopCash
+            await page.tap("body")
+            print(f"✅ [Visit {visit_num}] Success!")
+
+        except Exception as e:
+            print(f"❌ [Visit {visit_num}] Failed: {e}")
+
+        # إغلاق الجلسة تماماً لمسح أي أثر للزيارة السابقة
+        await context.close()
+        await browser.close()
+
+
+async def main():
+    # عدد الزيارات لكل سيرفر في المرة الواحدة
+    for i in range(1, 101):
+        await send_mobile_visit(i)
+        await asyncio.sleep(random.uniform(1.5, 3.5))
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+    
