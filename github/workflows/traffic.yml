@@ -1,15 +1,12 @@
 name: Bulk Mobile Traffic Bot
 
 on:
-  workflow_dispatch: # لتشغيل الزيارات يدوياً بضغطة زرار في أي وقت
-  schedule:
-    - cron: '0 */2 * * *' # تشغيل أوتوماتيك كل ساعتين لضمان استمرار الزيارات
+  workflow_dispatch:
 
 jobs:
   run-matrix:
     strategy:
       matrix:
-        # فتح 10 سيرفرات متوازية في نفس اللحظة
         worker: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     runs-on: ubuntu-latest
     steps:
@@ -17,11 +14,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/python-version@v4
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Install Playwright
+      - name: Install Dependencies
         run: |
           pip install playwright
           playwright install chromium
