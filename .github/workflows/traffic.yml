@@ -1,0 +1,28 @@
+name: Bulk Mobile Traffic Bot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-matrix:
+    strategy:
+      matrix:
+        worker: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/python-version@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install chromium
+
+      - name: Run Mobile Bot Script
+        run: python main.py
+        
